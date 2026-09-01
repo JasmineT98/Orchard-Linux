@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Terminal
+Comment=Command line
+Icon=utilities-terminal
+Exec=foot
+Categories=System;TerminalEmulator;
+Terminal=false

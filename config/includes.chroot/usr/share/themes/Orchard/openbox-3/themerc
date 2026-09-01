@@ -1,0 +1,13 @@
+window.active.title.bg.color: #f7f7f9
+window.inactive.title.bg.color: #ededf0
+window.active.label.text.color: #1d1d1f
+window.inactive.label.text.color: #77777c
+window.active.border.color: #c9c9ce
+window.inactive.border.color: #d7d7dc
+window.handle.width: 0
+border.width: 1
+padding.width: 7
+menu.items.bg.color: #f7f7f9
+menu.items.text.color: #1d1d1f
+menu.items.active.bg.color: #ffe2c4
+menu.items.active.text.color: #1d1d1f

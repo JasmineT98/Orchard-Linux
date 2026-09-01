@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+kind="${1:-}"; pkg="${2:-}"
+[[ -n "$pkg" ]] || exit 2
+case "$kind" in
+  apt)
+    [[ $EUID -eq 0 ]] || { echo "APT install requires root" >&2; exit 1; }
+    apt-get update
+    DEBIAN_FRONTEND=noninteractive apt-get install -y "$pkg"
+    ;;
+  flatpak)
+    flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+    flatpak install --user -y flathub "$pkg"
+    ;;
+  *) exit 2 ;;
+esac

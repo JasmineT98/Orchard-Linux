@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=X-GNOME-Metatheme
+Name=Orchard
+Comment=Orchard B1 compatibility theme
+[X-GNOME-Metatheme]
+GtkTheme=Orchard
+IconTheme=Adwaita
+CursorTheme=Adwaita

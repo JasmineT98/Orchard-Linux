@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Files
+Comment=Browse files
+Icon=system-file-manager
+Exec=files
+Categories=System;FileTools;
+Terminal=false

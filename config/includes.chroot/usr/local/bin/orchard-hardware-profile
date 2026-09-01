@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -e
+mkdir -p "$HOME/.cache/orchard"
+ram_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+cpu=$(lscpu 2>/dev/null | awk -F: '/Model name/ {gsub(/^ +/,"",$2); print $2; exit}')
+gpu=$(lspci 2>/dev/null | awk -F: '/VGA|Display/ {print $3; exit}')
+profile=standard
+if (( ram_kb < 6000000 )); then profile=low-memory; fi
+if echo "$cpu $gpu" | grep -Eqi 'Celeron|Ivy Bridge|HD Graphics 2[0-9]{3}|HD Graphics 3[0-9]{3}'; then profile=low-memory; fi
+printf 'profile=%s\nram_kb=%s\ncpu=%s\ngpu=%s\n' "$profile" "$ram_kb" "$cpu" "$gpu" > "$HOME/.cache/orchard/hardware-profile"

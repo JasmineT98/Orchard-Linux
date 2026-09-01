@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+# NetworkManager should own networking in the live desktop.
+systemctl enable NetworkManager.service || true
+systemctl enable lightdm.service || true
+systemctl enable zramswap.service || true
+# Avoid a few server-oriented services if pulled as dependencies.
+systemctl disable ModemManager.service 2>/dev/null || true

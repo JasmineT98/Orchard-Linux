@@ -1,0 +1,76 @@
+# Core live system
+linux-image-amd64
+live-boot
+live-config
+systemd-sysv
+dbus-user-session
+sudo
+locales
+
+# Wayland desktop
+labwc
+waybar
+wofi
+swaybg
+xwayland
+foot
+mako-notifier
+wl-clipboard
+
+# Login/session
+lightdm
+lightdm-gtk-greeter
+lxpolkit
+
+# Networking/Bluetooth
+network-manager
+network-manager-gnome
+wpasupplicant
+bluez
+blueman
+
+# Audio/power/storage
+pipewire
+pipewire-audio
+wireplumber
+pavucontrol
+upower
+brightnessctl
+udisks2
+gvfs
+gvfs-backends
+
+# Unified toolkit integration
+python3
+python3-gi
+gir1.2-gtk-4.0
+gtk2-engines-murrine
+qt6ct
+qt-style-kvantum
+qt-style-kvantum-themes
+xdg-desktop-portal
+xdg-desktop-portal-gtk
+xdg-desktop-portal-wlr
+xdg-utils
+xdg-user-dirs
+shared-mime-info
+desktop-file-utils
+adwaita-icon-theme
+fonts-inter
+firefox-esr
+pciutils
+fonts-font-awesome
+
+# App delivery
+flatpak
+curl
+ca-certificates
+
+# Low-memory / hardware support
+zram-tools
+intel-microcode
+firmware-iwlwifi
+firmware-realtek
+firmware-misc-nonfree
+mesa-va-drivers
+mesa-vulkan-drivers

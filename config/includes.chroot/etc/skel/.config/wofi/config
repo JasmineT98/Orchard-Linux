@@ -1,0 +1,7 @@
+width=560
+height=420
+show=drun
+prompt=Search applications
+allow_images=true
+image_size=36
+insensitive=true
