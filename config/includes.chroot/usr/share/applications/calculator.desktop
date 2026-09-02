@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Calculator
-Comment=Calculator
-Icon=accessories-calculator
-Exec=calculator
-Categories=Utility;Calculator;
-Terminal=false

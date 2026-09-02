@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=App Store
-Comment=Install applications
-Icon=system-software-install
-Exec=app-store
-Categories=System;PackageManager;
-Terminal=false

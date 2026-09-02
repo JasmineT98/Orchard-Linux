@@ -1,5 +1,0 @@
-export XDG_CURRENT_DESKTOP=Orchard
-export XDG_SESSION_DESKTOP=Orchard
-export QT_STYLE_OVERRIDE=kvantum
-export QT_QPA_PLATFORMTHEME=qt6ct
-export XCURSOR_SIZE=24

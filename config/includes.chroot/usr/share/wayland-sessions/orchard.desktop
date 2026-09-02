@@ -1,6 +1,0 @@
-[Desktop Entry]
-Name=Orchard Linux
-Comment=Lightweight modern desktop
-Exec=/usr/local/bin/orchard-session
-Type=Application
-DesktopNames=Orchard

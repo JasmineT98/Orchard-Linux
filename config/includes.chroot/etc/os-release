@@ -1,8 +1,0 @@
-PRETTY_NAME="Orchard Linux B1"
-NAME="Orchard Linux"
-VERSION_ID="B1"
-VERSION="B1 (Debian 13 trixie)"
-ID=orchard
-ID_LIKE=debian
-HOME_URL="https://www.debian.org/"
-SUPPORT_URL="https://www.debian.org/support"
