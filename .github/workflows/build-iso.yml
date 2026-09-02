@@ -49,8 +49,11 @@ jobs:
         run: |
           test -s out/orchard-linux-b1-amd64.iso
           test -s out/orchard-linux-b1-amd64.iso.sha256
-          sha256sum -c out/orchard-linux-b1-amd64.iso.sha256
-          ls -lh out/orchard-linux-b1-amd64.iso*
+          (
+            cd out
+            sha256sum -c orchard-linux-b1-amd64.iso.sha256
+            ls -lh orchard-linux-b1-amd64.iso*
+          )
 
       - name: Upload ISO
         uses: actions/upload-artifact@v7
