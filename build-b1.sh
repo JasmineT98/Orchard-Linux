@@ -61,7 +61,13 @@ if [[ -z "$ISO" ]]; then
   echo "Build completed but no ISO was found." >&2
   exit 1
 fi
+
 cp -f "$ISO" "$OUT/orchard-linux-b1-amd64.iso"
-sha256sum "$OUT/orchard-linux-b1-amd64.iso" > "$OUT/orchard-linux-b1-amd64.iso.sha256"
+
+(
+  cd "$OUT"
+  sha256sum orchard-linux-b1-amd64.iso > orchard-linux-b1-amd64.iso.sha256
+)
+
 echo
 echo "B1 ISO ready: $OUT/orchard-linux-b1-amd64.iso"
