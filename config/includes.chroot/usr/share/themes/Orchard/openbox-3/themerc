@@ -1,0 +1,8 @@
+window.active.title.bg.color: #f1f1f3
+window.inactive.title.bg.color: #e8e8eb
+window.active.label.text.color: #202024
+window.inactive.label.text.color: #77777c
+window.button.width: 24
+window.button.height: 24
+border.width: 1
+border.color: #c9c9ce

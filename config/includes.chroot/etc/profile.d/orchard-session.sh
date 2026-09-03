@@ -1,0 +1,4 @@
+export XDG_CURRENT_DESKTOP=Orchard
+export XDG_SESSION_DESKTOP=Orchard
+export GTK_THEME=Orchard
+export QT_QPA_PLATFORMTHEME=qt6ct

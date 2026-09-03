@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+mkdir -p "$HOME/Pictures"
+grim "$HOME/Pictures/Screenshot-$(date +%Y%m%d-%H%M%S).png"

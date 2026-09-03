@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+import gi
+gi.require_version("Gtk", "4.0")
+from gi.repository import Gtk
+from orchard.ui import install_css, titled_label
+
+class Settings(Gtk.Application):
+    def __init__(self):
+        super().__init__(application_id="org.orchard.Settings")
+
+    def do_activate(self):
+        install_css()
+        win = Gtk.ApplicationWindow(application=self, title="Settings")
+        win.set_default_size(860, 570)
+
+        outer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=18)
+        outer.set_margin_top(24)
+        outer.set_margin_bottom(24)
+        outer.set_margin_start(28)
+        outer.set_margin_end(28)
+        outer.append(titled_label("Settings", "System controls for Orchard."))
+
+        grid = Gtk.Grid(column_spacing=14, row_spacing=14)
+        items = [
+            ("Appearance", "Light and dark presentation"),
+            ("Wi-Fi", "Wireless networks"),
+            ("Bluetooth", "Bluetooth devices"),
+            ("Sound", "Audio"),
+            ("Displays", "Display and brightness"),
+            ("Power", "Battery and power"),
+            ("Storage", "Disks and removable media"),
+            ("Keyboard", "Command / Windows / Search shortcuts"),
+            ("About Orchard", "System information"),
+        ]
+
+        for i, (name, desc) in enumerate(items):
+            b = Gtk.Button()
+            box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
+            a = Gtk.Label(label=name, xalign=0)
+            a.set_markup(f"<b>{name}</b>")
+            d = Gtk.Label(label=desc, xalign=0)
+            d.set_wrap(True)
+            box.append(a)
+            box.append(d)
+            b.set_child(box)
+            grid.attach(b, i % 3, i // 3, 1, 1)
+
+        outer.append(grid)
+        win.set_child(outer)
+        win.present()
+
+Settings().run()

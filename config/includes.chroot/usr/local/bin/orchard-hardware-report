@@ -1,0 +1,25 @@
+#!/bin/sh
+set -eu
+OUT="${1:-$HOME/orchard-hardware.txt}"
+
+{
+  echo "Orchard Linux hardware report"
+  echo "Generated: $(date)"
+  echo
+  echo "== Kernel =="
+  uname -a
+  echo
+  echo "== PCI =="
+  lspci -nnk 2>/dev/null || true
+  echo
+  echo "== USB =="
+  lsusb 2>/dev/null || true
+  echo
+  echo "== Network =="
+  nmcli device 2>/dev/null || true
+  echo
+  echo "== Audio =="
+  wpctl status 2>/dev/null || true
+} > "$OUT"
+
+echo "$OUT"

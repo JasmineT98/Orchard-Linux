@@ -1,0 +1,43 @@
+name: Update Orchard Last Working Backup
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - '.orchard-backup'
+
+permissions:
+  contents: write
+
+jobs:
+  backup:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Read confirmed stable commit
+        id: stable
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="$(sed -n 's/^LAST_WORKING_COMMIT=//p' .orchard-backup | tail -n1)"
+          if [[ -z "$target" ]]; then
+            echo "LAST_WORKING_COMMIT is missing." >&2
+            exit 1
+          fi
+          git fetch --all --tags --prune
+          git cat-file -e "${target}^{commit}"
+          echo "target=$target" >> "$GITHUB_OUTPUT"
+
+      - name: Move backup branch
+        env:
+          TARGET: ${{ steps.stable.outputs.target }}
+        run: |
+          set -euo pipefail
+          git push origin "${TARGET}:refs/heads/backup/last-working" --force
+          echo "backup/last-working -> ${TARGET}"

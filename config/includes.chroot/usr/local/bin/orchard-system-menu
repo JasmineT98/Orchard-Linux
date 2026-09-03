@@ -1,0 +1,31 @@
+#!/bin/sh
+set -eu
+
+choice="$(
+  printf '%s\n' \
+    'About Orchard' \
+    'System Settings…' \
+    'Lock Screen' \
+    'Sleep' \
+    'Restart…' \
+    'Shut Down…' |
+  wofi --dmenu --prompt Orchard --width 320 --height 330
+)" || exit 0
+
+case "$choice" in
+  "About Orchard"|"System Settings…")
+    settings &
+    ;;
+  "Lock Screen")
+    loginctl lock-session
+    ;;
+  "Sleep")
+    systemctl suspend
+    ;;
+  "Restart…")
+    systemctl reboot
+    ;;
+  "Shut Down…")
+    systemctl poweroff
+    ;;
+esac

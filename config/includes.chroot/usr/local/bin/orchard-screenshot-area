@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+mkdir -p "$HOME/Pictures"
+geometry="$(slurp)" || exit 0
+grim -g "$geometry" "$HOME/Pictures/Screenshot-$(date +%Y%m%d-%H%M%S).png"

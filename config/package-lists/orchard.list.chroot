@@ -1,0 +1,107 @@
+# Core live system
+linux-image-amd64
+live-boot
+live-config
+systemd-sysv
+dbus-user-session
+sudo
+locales
+
+# Lightweight Wayland desktop prototype
+labwc
+waybar
+wofi
+swaybg
+xwayland
+foot
+mako-notifier
+wl-clipboard
+
+# Login/session
+lightdm
+lightdm-gtk-greeter
+lxpolkit
+
+# Networking and Bluetooth
+network-manager
+network-manager-gnome
+wpasupplicant
+bluez
+blueman
+rfkill
+
+# Audio, power and storage
+pipewire
+pipewire-audio
+wireplumber
+pavucontrol
+upower
+brightnessctl
+udisks2
+gvfs
+gvfs-backends
+alsa-ucm-conf
+
+# Toolkit/system integration
+python3
+python3-gi
+gir1.2-gtk-4.0
+gtk2-engines-murrine
+qt6ct
+qt-style-kvantum
+qt-style-kvantum-themes
+xdg-desktop-portal
+xdg-desktop-portal-gtk
+xdg-desktop-portal-wlr
+xdg-utils
+xdg-user-dirs
+shared-mime-info
+desktop-file-utils
+adwaita-icon-theme
+fonts-inter
+fonts-font-awesome
+
+# Browser and app delivery
+firefox-esr
+flatpak
+curl
+ca-certificates
+
+# Diagnostics/removable storage
+pciutils
+usbutils
+exfatprogs
+ntfs-3g
+dosfstools
+
+# Low-memory support
+zram-tools
+
+# CPU microcode
+intel-microcode
+amd64-microcode
+
+# Firmware: kernel contains the drivers, these supply device firmware
+firmware-linux
+firmware-iwlwifi
+firmware-realtek
+firmware-atheros
+firmware-brcm80211
+firmware-mediatek
+firmware-libertas
+firmware-intel-sound
+firmware-sof-signed
+
+# Graphics userspace
+mesa-va-drivers
+mesa-vulkan-drivers
+
+# Common laptop services
+iio-sensor-proxy
+fprintd
+bolt
+fwupd
+
+# Screenshots
+grim
+slurp

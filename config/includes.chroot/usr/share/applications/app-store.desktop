@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=App Store
+Exec=app-store
+Icon=system-software-install
+Categories=System;
+Terminal=false

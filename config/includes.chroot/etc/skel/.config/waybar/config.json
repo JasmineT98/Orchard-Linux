@@ -1,0 +1,77 @@
+[
+  {
+    "name": "top",
+    "layer": "top",
+    "position": "top",
+    "height": 30,
+    "spacing": 4,
+    "modules-left": ["custom/logo", "custom/apps"],
+    "modules-center": ["clock"],
+    "modules-right": ["network", "pulseaudio", "battery", "custom/control"],
+
+    "custom/logo": {
+      "format": "●",
+      "tooltip": "Orchard",
+      "on-click": "orchard-system-menu"
+    },
+
+    "custom/apps": {
+      "format": "Applications",
+      "on-click": "wofi --show drun --prompt Applications"
+    },
+
+    "clock": {
+      "format": "{:%a %b %d  %I:%M %p}",
+      "tooltip-format": "{:%A, %B %d, %Y}"
+    },
+
+    "network": {
+      "format-wifi": "",
+      "format-ethernet": "󰈀",
+      "format-disconnected": "󰤭"
+    },
+
+    "pulseaudio": {
+      "format": "{icon}",
+      "format-muted": "󰖁",
+      "format-icons": {"default": ["", "", ""]},
+      "on-click": "pavucontrol"
+    },
+
+    "battery": {
+      "format": "{icon} {capacity}%",
+      "format-icons": ["", "", "", "", ""]
+    },
+
+    "custom/control": {
+      "format": "⚙",
+      "tooltip": "Settings",
+      "on-click": "settings"
+    }
+  },
+  {
+    "name": "dock",
+    "layer": "top",
+    "position": "bottom",
+    "height": 56,
+    "margin-bottom": 8,
+    "margin-left": 160,
+    "margin-right": 160,
+    "spacing": 11,
+    "modules-center": [
+      "custom/files",
+      "custom/browser",
+      "custom/editor",
+      "custom/store",
+      "custom/settings",
+      "custom/terminal"
+    ],
+
+    "custom/files": {"format": "", "tooltip": "Files", "on-click": "files"},
+    "custom/browser": {"format": "", "tooltip": "Browser", "on-click": "firefox-esr"},
+    "custom/editor": {"format": "", "tooltip": "Text Editor", "on-click": "text-editor"},
+    "custom/store": {"format": "", "tooltip": "App Store", "on-click": "app-store"},
+    "custom/settings": {"format": "", "tooltip": "Settings", "on-click": "settings"},
+    "custom/terminal": {"format": "", "tooltip": "Terminal", "on-click": "foot"}
+  }
+]

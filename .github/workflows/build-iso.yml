@@ -1,0 +1,68 @@
+name: Build Orchard Linux ISO
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'config/**'
+      - 'build.sh'
+      - 'validate.sh'
+      - 'README.md'
+      - '.github/workflows/build-iso.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+
+      - name: Validate project
+        run: |
+          chmod +x build.sh validate.sh clean.sh test-qemu.sh
+          ./validate.sh
+
+      - name: Build ISO inside Debian 13
+        run: |
+          docker pull debian:13
+          docker run --privileged --rm \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -w /workspace \
+            debian:13 \
+            bash -lc '
+              set -euxo pipefail
+              apt-get update
+              DEBIAN_FRONTEND=noninteractive apt-get install -y \
+                ca-certificates live-build debootstrap xorriso squashfs-tools \
+                grub-pc-bin grub-efi-amd64-bin mtools dosfstools \
+                syslinux-common isolinux
+              chmod +x ./build.sh
+              ./build.sh
+            '
+
+      - name: Verify ISO
+        run: |
+          test -s out/orchard-linux-amd64.iso
+          test -s out/orchard-linux-amd64.iso.sha256
+          (
+            cd out
+            sha256sum -c orchard-linux-amd64.iso.sha256
+            ls -lh orchard-linux-amd64.iso*
+          )
+
+      - name: Upload ISO
+        uses: actions/upload-artifact@v7
+        with:
+          name: orchard-linux-amd64
+          path: |
+            out/orchard-linux-amd64.iso
+            out/orchard-linux-amd64.iso.sha256
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0

@@ -1,11 +1,22 @@
-# Orchard B2 cloud build
+# Orchard Linux cloud build
 
-The repository includes `.github/workflows/build-iso.yml`.
+The permanent workflow file is:
 
-1. Replace the repository contents with this B2 project.
-2. Open **Actions -> Build B2 ISO**.
-3. Run the workflow, or let the push to `main` trigger it.
-4. Download the `orchard-linux-b2-amd64` artifact.
-5. Extract the ISO and SHA-256 checksum.
+```text
+.github/workflows/build-iso.yml
+```
 
-The workflow builds inside a Debian 13 container and verifies the checksum before upload.
+It builds the ISO inside a Debian 13 container on GitHub-hosted infrastructure.
+
+The artifact name never changes:
+
+```text
+orchard-linux-amd64
+```
+
+The artifact contains:
+
+```text
+orchard-linux-amd64.iso
+orchard-linux-amd64.iso.sha256
+```

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Files
+Exec=files
+Icon=system-file-manager
+Categories=Utility;
+Terminal=false

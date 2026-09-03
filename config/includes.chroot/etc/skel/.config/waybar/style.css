@@ -1,0 +1,35 @@
+* {
+  font-family: Inter, "Font Awesome 6 Free", sans-serif;
+  font-size: 13px;
+  min-height: 0;
+}
+
+window#waybar {
+  background: rgba(18, 18, 20, 0.90);
+  color: #f6f6f7;
+}
+
+#custom-logo {
+  color: #ff7a00;
+  font-size: 18px;
+  padding: 0 8px 0 10px;
+}
+
+#custom-apps,
+#clock,
+#network,
+#pulseaudio,
+#battery,
+#custom-control {
+  padding: 0 9px;
+}
+
+#custom-files,
+#custom-browser,
+#custom-editor,
+#custom-store,
+#custom-settings,
+#custom-terminal {
+  font-size: 25px;
+  padding: 8px 10px;
+}

@@ -1,0 +1,8 @@
+#!/bin/sh
+dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP &
+swaybg -i /usr/share/backgrounds/orchard/orchard.png -m fill &
+mako &
+waybar -c "$HOME/.config/waybar/config.json" -s "$HOME/.config/waybar/style.css" &
+nm-applet --indicator &
+blueman-applet &
+lxpolkit &
