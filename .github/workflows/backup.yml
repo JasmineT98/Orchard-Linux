@@ -6,9 +6,10 @@ on:
     branches: [ main ]
     paths:
       - '.orchard-backup'
+      - '.github/workflows/backup.yml'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   backup:
@@ -30,14 +31,33 @@ jobs:
             echo "LAST_WORKING_COMMIT is missing." >&2
             exit 1
           fi
+
           git fetch --all --tags --prune
           git cat-file -e "${target}^{commit}"
-          echo "target=$target" >> "$GITHUB_OUTPUT"
 
-      - name: Move backup branch
+          echo "target=$target" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$target" > LAST_WORKING_COMMIT.txt
+
+      - name: Create stable source archive
         env:
           TARGET: ${{ steps.stable.outputs.target }}
         run: |
           set -euo pipefail
-          git push origin "${TARGET}:refs/heads/backup/last-working" --force
-          echo "backup/last-working -> ${TARGET}"
+          git archive --format=tar.gz \
+            --output=orchard-last-working-source.tar.gz \
+            "$TARGET"
+
+          sha256sum orchard-last-working-source.tar.gz \
+            > orchard-last-working-source.tar.gz.sha256
+
+      - name: Upload last working backup
+        uses: actions/upload-artifact@v7
+        with:
+          name: orchard-last-working-source
+          path: |
+            orchard-last-working-source.tar.gz
+            orchard-last-working-source.tar.gz.sha256
+            LAST_WORKING_COMMIT.txt
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0

@@ -52,7 +52,8 @@ orchard-linux-amd64
 ## Stable backup
 
 `.orchard-backup` contains the Git commit that has been explicitly confirmed
-stable. Updating that file triggers the backup workflow, which moves the
-`backup/last-working` branch to that confirmed commit.
+stable. Updating that file triggers the backup workflow, which verifies that
+commit and creates an `orchard-last-working-source` source archive artifact.
 
-A new upload is never considered stable automatically.
+The commit SHA remains the authoritative restore point in Git history. A new
+upload is never considered stable automatically.

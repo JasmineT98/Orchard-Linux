@@ -4,7 +4,6 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILD="$ROOT/build"
 OUT="$ROOT/out"
-PKGLIST="$ROOT/config/package-lists/orchard.list.chroot"
 
 if [[ $EUID -ne 0 ]]; then
   echo "Run with sudo: sudo ./build.sh" >&2
@@ -28,18 +27,10 @@ if ! command -v lb >/dev/null 2>&1; then
     live-build debootstrap xorriso squashfs-tools
 fi
 
-missing=()
-while IFS= read -r pkg; do
-  pkg="${pkg%%#*}"
-  pkg="$(echo "$pkg" | xargs)"
-  [[ -z "$pkg" ]] && continue
-  apt-cache show "$pkg" >/dev/null 2>&1 || missing+=("$pkg")
-done < "$PKGLIST"
-
-if ((${#missing[@]})); then
-  printf 'Missing Debian packages: %s\n' "${missing[*]}" >&2
-  exit 1
-fi
+# Do not pre-check the live package list against the build host's APT sources.
+# Several hardware firmware packages live in non-free-firmware, and the build
+# host may not have that component enabled. live-build resolves the package
+# list after --archive-areas enables all required Debian archive components.
 
 find "$ROOT/config/hooks" -type f -name '*.hook.chroot' -exec chmod +x {} +
 find "$ROOT/config/includes.chroot/usr/local/bin" -type f -exec chmod +x {} +
@@ -70,6 +61,7 @@ if [[ -z "$ISO" ]]; then
 fi
 
 cp -f "$ISO" "$OUT/orchard-linux-amd64.iso"
+
 (
   cd "$OUT"
   sha256sum orchard-linux-amd64.iso > orchard-linux-amd64.iso.sha256
