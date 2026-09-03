@@ -1,0 +1,33 @@
+#!/bin/sh
+set -eu
+
+echo "Running Orchard application smoke test..."
+
+python3 - <<'PY'
+import gi
+gi.require_version("Gtk", "4.0")
+from gi.repository import Gtk
+import orchard.ui
+print("Orchard GTK runtime imports: OK")
+PY
+
+for app in \
+    /usr/local/bin/settings \
+    /usr/local/bin/wifi-settings \
+    /usr/local/bin/files \
+    /usr/local/bin/text-editor \
+    /usr/local/bin/calculator \
+    /usr/local/bin/app-store \
+    /usr/local/bin/orchard-system-menu \
+    /usr/bin/firefox-esr \
+    /usr/bin/foot
+do
+    test -x "$app" || {
+        echo "Missing executable: $app" >&2
+        exit 1
+    }
+done
+
+test -x /usr/bin/nmcli || { echo "Missing nmcli" >&2; exit 1; }
+
+echo "Orchard application smoke test: OK"

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=App Store
-Exec=app-store
-Icon=system-software-install
+Exec=/usr/local/bin/app-store
+Icon=orchard-store
 Categories=System;
 Terminal=false

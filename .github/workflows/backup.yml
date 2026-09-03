@@ -27,14 +27,9 @@ jobs:
         run: |
           set -euo pipefail
           target="$(sed -n 's/^LAST_WORKING_COMMIT=//p' .orchard-backup | tail -n1)"
-          if [[ -z "$target" ]]; then
-            echo "LAST_WORKING_COMMIT is missing." >&2
-            exit 1
-          fi
-
+          test -n "$target"
           git fetch --all --tags --prune
           git cat-file -e "${target}^{commit}"
-
           echo "target=$target" >> "$GITHUB_OUTPUT"
           printf '%s\n' "$target" > LAST_WORKING_COMMIT.txt
 
@@ -42,11 +37,9 @@ jobs:
         env:
           TARGET: ${{ steps.stable.outputs.target }}
         run: |
-          set -euo pipefail
           git archive --format=tar.gz \
             --output=orchard-last-working-source.tar.gz \
             "$TARGET"
-
           sha256sum orchard-last-working-source.tar.gz \
             > orchard-last-working-source.tar.gz.sha256
 

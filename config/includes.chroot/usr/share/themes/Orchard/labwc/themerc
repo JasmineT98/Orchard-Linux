@@ -1,8 +1,42 @@
-window.active.title.bg.color: #f1f1f3
-window.inactive.title.bg.color: #e8e8eb
-window.active.label.text.color: #202024
-window.inactive.label.text.color: #77777c
-window.button.width: 24
-window.button.height: 24
 border.width: 1
-border.color: #c9c9ce
+window.titlebar.padding.width: 8
+window.titlebar.padding.height: 5
+window.button.width: 18
+window.button.height: 18
+window.button.spacing: 4
+
+window.active.border.color: #aaaaaf
+window.inactive.border.color: #8e8e93
+window.active.title.bg.color: #f2f2f4
+window.inactive.title.bg.color: #e5e5e8
+window.active.label.text.color: #252529
+window.inactive.label.text.color: #77777c
+window.label.text.justify: center
+
+window.active.button.close.unpressed.image.color: #ff5d57
+window.inactive.button.close.unpressed.image.color: #c9a0a0
+window.active.button.iconify.unpressed.image.color: #febc2e
+window.inactive.button.iconify.unpressed.image.color: #cab98c
+window.active.button.max.unpressed.image.color: #28c840
+window.inactive.button.max.unpressed.image.color: #8daf92
+window.button.hover.bg.color: #00000010
+window.button.hover.bg.corner-radius: 9
+
+window.active.shadow.size: 45
+window.inactive.shadow.size: 32
+window.active.shadow.color: #00000055
+window.inactive.shadow.color: #00000038
+
+menu.border.width: 1
+menu.border.color: #bdbdc2
+menu.items.bg.color: #f8f8fa
+menu.items.text.color: #252529
+menu.items.active.bg.color: #ff7a0028
+menu.items.active.text.color: #202024
+menu.items.padding.x: 10
+menu.items.padding.y: 7
+menu.separator.color: #d8d8dc
+
+osd.bg.color: #202024ee
+osd.border.color: #ffffff20
+osd.label.text.color: #ffffff

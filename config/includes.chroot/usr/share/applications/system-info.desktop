@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=System Information
+Exec=/usr/local/bin/system-info
+Icon=orchard-info
+Categories=System;
+Terminal=false

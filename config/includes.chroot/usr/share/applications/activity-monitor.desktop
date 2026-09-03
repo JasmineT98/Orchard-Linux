@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Activity Monitor
+Exec=/usr/local/bin/activity-monitor
+Icon=orchard-activity
+Categories=System;
+Terminal=false

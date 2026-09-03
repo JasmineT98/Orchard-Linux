@@ -1,4 +1,5 @@
 #!/bin/sh
 export XDG_CURRENT_DESKTOP=Orchard
 export XDG_SESSION_DESKTOP=Orchard
+export GTK_THEME=Orchard
 exec labwc

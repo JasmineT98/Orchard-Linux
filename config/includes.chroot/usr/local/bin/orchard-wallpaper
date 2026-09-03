@@ -1,0 +1,6 @@
+#!/usr/bin/env python3
+import os
+from orchard.ui import load_settings
+s = load_settings()
+wall = s.get("wallpaper") or "/usr/share/backgrounds/orchard/orchard.png"
+os.execv("/usr/bin/swaybg", ["swaybg", "-i", wall, "-m", "fill"])

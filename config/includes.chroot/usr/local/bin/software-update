@@ -1,0 +1,33 @@
+#!/usr/bin/env python3
+import sys, subprocess
+import gi
+gi.require_version("Gtk", "4.0")
+from gi.repository import Gtk
+from orchard.ui import install_css, titled_label
+
+class Updates(Gtk.Application):
+    def __init__(self):
+        super().__init__(application_id="org.orchard.SoftwareUpdate")
+        self.label = None
+    def do_activate(self):
+        install_css()
+        win = Gtk.ApplicationWindow(application=self, title="Software Update")
+        win.set_default_size(680, 480)
+        root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14)
+        root.set_margin_top(24); root.set_margin_bottom(24)
+        root.set_margin_start(26); root.set_margin_end(26)
+        root.append(titled_label("Software Update", "Keep Orchard and system components current"))
+        self.label = Gtk.Label(label="Select Check for Updates.", xalign=0)
+        self.label.set_wrap(True); root.append(self.label)
+        check = Gtk.Button(label="Check for Updates"); check.connect("clicked", self.check)
+        install = Gtk.Button(label="Install Updates…"); install.connect("clicked", self.install)
+        root.append(check); root.append(install)
+        win.set_child(root); win.present()
+    def check(self, *_):
+        cp = subprocess.run(["/usr/bin/apt","list","--upgradable"], text=True, capture_output=True)
+        lines = [x for x in cp.stdout.splitlines() if "/" in x]
+        self.label.set_text(f"{len(lines)} update(s) available." if lines else "Your system is up to date.")
+    def install(self, *_):
+        subprocess.Popen(["/usr/bin/pkexec","/usr/local/libexec/orchard-update-helper"])
+        self.label.set_text("Update process started. Orchard will request authorization if needed.")
+Updates().run(sys.argv)

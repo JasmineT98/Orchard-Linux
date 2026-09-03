@@ -1,4 +1,6 @@
 #!/bin/sh
 set -eu
 mkdir -p "$HOME/Pictures"
-grim "$HOME/Pictures/Screenshot-$(date +%Y%m%d-%H%M%S).png"
+file="$HOME/Pictures/Screenshot-$(date +%Y%m%d-%H%M%S).png"
+grim "$file"
+notify-send "Screenshot saved" "$file" 2>/dev/null || true

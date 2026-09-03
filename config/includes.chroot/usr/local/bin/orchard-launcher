@@ -1,0 +1,95 @@
+#!/usr/bin/env python3
+import sys
+import subprocess
+import gi
+gi.require_version("Gtk", "4.0")
+from gi.repository import Gtk
+from orchard.ui import install_css, spawn, titled_label
+
+APPS = [
+    ("Files", "orchard-files", "/usr/local/bin/files"),
+    ("Browser", "orchard-browser", "/usr/local/bin/orchard-browser"),
+    ("Notes", "orchard-notes", "/usr/local/bin/notes"),
+    ("Text Editor", "orchard-editor", "/usr/local/bin/text-editor"),
+    ("Calculator", "orchard-calculator", "/usr/local/bin/calculator"),
+    ("App Store", "orchard-store", "/usr/local/bin/app-store"),
+    ("Settings", "orchard-settings", "/usr/local/bin/settings"),
+    ("Calendar", "orchard-calendar", "/usr/local/bin/calendar"),
+    ("Contacts", "orchard-contacts", "/usr/local/bin/contacts"),
+    ("Clock", "orchard-clock", "/usr/local/bin/clock"),
+    ("Photos", "orchard-photos", "/usr/local/bin/photos"),
+    ("Activity Monitor", "orchard-activity", "/usr/local/bin/activity-monitor"),
+    ("System Information", "orchard-info", "/usr/local/bin/system-info"),
+    ("Software Update", "orchard-update", "/usr/local/bin/software-update"),
+    ("Terminal", "orchard-terminal", "/usr/bin/foot"),
+]
+
+class Launcher(Gtk.Application):
+    def __init__(self):
+        super().__init__(application_id="org.orchard.Launcher")
+        self.flow = None
+
+    def do_activate(self):
+        install_css("""
+        flowboxchild { border-radius: 14px; }
+        flowboxchild:hover { background: rgba(255,122,0,0.16); }
+        """)
+        win = Gtk.ApplicationWindow(application=self, title="Search")
+        win.set_default_size(760, 560)
+
+        root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14)
+        root.set_margin_top(24)
+        root.set_margin_bottom(24)
+        root.set_margin_start(28)
+        root.set_margin_end(28)
+        root.append(titled_label("Search", "Applications and Orchard tools"))
+
+        search = Gtk.SearchEntry()
+        search.set_placeholder_text("Search applications")
+        root.append(search)
+
+        self.flow = Gtk.FlowBox()
+        self.flow.set_selection_mode(Gtk.SelectionMode.NONE)
+        self.flow.set_max_children_per_line(5)
+        self.flow.set_min_children_per_line(3)
+        self.flow.set_row_spacing(12)
+        self.flow.set_column_spacing(12)
+
+        for name, icon, command in APPS:
+            child = Gtk.FlowBoxChild()
+            button = Gtk.Button()
+            box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=7)
+            image = Gtk.Image.new_from_icon_name(icon)
+            image.set_pixel_size(46)
+            label = Gtk.Label(label=name)
+            label.set_wrap(True)
+            box.append(image)
+            box.append(label)
+            button.set_child(box)
+            button.connect("clicked", self.open_app, command, win)
+            child.set_child(button)
+            child.app_name = name.lower()
+            self.flow.append(child)
+
+        search.connect("search-changed", self.filter_apps)
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_vexpand(True)
+        scroll.set_child(self.flow)
+        root.append(scroll)
+
+        win.set_child(root)
+        win.present()
+        search.grab_focus()
+
+    def filter_apps(self, entry):
+        q = entry.get_text().strip().lower()
+        child = self.flow.get_first_child()
+        while child:
+            child.set_visible(not q or q in child.app_name)
+            child = child.get_next_sibling()
+
+    def open_app(self, _button, command, win):
+        spawn([command])
+        win.close()
+
+Launcher().run(sys.argv)

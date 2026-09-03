@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Clock
+Exec=/usr/local/bin/clock
+Icon=orchard-clock
+Categories=Utility;
+Terminal=false

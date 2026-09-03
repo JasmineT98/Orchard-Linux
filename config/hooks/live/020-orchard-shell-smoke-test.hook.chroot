@@ -1,0 +1,51 @@
+#!/bin/sh
+set -eu
+
+echo "Running Orchard shell smoke tests..."
+
+python3 - <<'PY'
+import ctypes, ctypes.util
+lib = ctypes.util.find_library("gtk4-layer-shell")
+assert lib, "gtk4-layer-shell runtime library not found"
+ctypes.CDLL(lib, mode=ctypes.RTLD_GLOBAL)
+
+import gi
+gi.require_version("Gtk", "4.0")
+gi.require_version("Gtk4LayerShell", "1.0")
+from gi.repository import Gtk, Gtk4LayerShell
+import orchard.ui
+print("GTK4 + Gtk4LayerShell + orchard.ui imports: OK")
+PY
+
+for app in \
+  /usr/local/bin/orchard-shell \
+  /usr/local/bin/orchard-launcher \
+  /usr/local/bin/orchard-system-menu \
+  /usr/local/bin/orchard-control-center \
+  /usr/local/bin/orchard-notification-center \
+  /usr/local/bin/wifi-settings \
+  /usr/local/bin/settings \
+  /usr/local/bin/files \
+  /usr/local/bin/orchard-browser \
+  /usr/local/bin/notes \
+  /usr/local/bin/text-editor \
+  /usr/local/bin/calculator \
+  /usr/local/bin/app-store \
+  /usr/local/bin/calendar \
+  /usr/local/bin/contacts \
+  /usr/local/bin/clock \
+  /usr/local/bin/photos \
+  /usr/local/bin/activity-monitor \
+  /usr/local/bin/system-info \
+  /usr/local/bin/software-update \
+  /usr/local/bin/orchard-recovery \
+  /usr/local/bin/orchard-lock
+do
+  test -x "$app" || { echo "Missing executable: $app" >&2; exit 1; }
+done
+
+for bin in nmcli wpctl brightnessctl gtklock wdisplays chromium foot mako; do
+  command -v "$bin" >/dev/null 2>&1 || { echo "Missing runtime command: $bin" >&2; exit 1; }
+done
+
+echo "Orchard shell smoke tests: OK"

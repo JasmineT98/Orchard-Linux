@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Wi‑Fi
+Exec=/usr/local/bin/wifi-settings
+Icon=network-wireless
+Categories=Settings;Network;
+Terminal=false

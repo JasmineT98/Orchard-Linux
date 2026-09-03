@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Recovery
+Exec=/usr/local/bin/orchard-recovery
+Icon=orchard-recovery
+Categories=System;
+Terminal=false

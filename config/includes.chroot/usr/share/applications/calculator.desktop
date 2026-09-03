@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Calculator
-Exec=calculator
-Icon=accessories-calculator
+Exec=/usr/local/bin/calculator
+Icon=orchard-calculator
 Categories=Utility;
 Terminal=false

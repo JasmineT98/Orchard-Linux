@@ -1,8 +1,9 @@
 #!/bin/sh
-dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP &
-swaybg -i /usr/share/backgrounds/orchard/orchard.png -m fill &
-mako &
-waybar -c "$HOME/.config/waybar/config.json" -s "$HOME/.config/waybar/style.css" &
-nm-applet --indicator &
-blueman-applet &
+dbus-update-activation-environment --systemd \
+  WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_RUNTIME_DIR &
+
+systemctl --user import-environment \
+  WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_RUNTIME_DIR >/dev/null 2>&1 || true
+
+systemctl --user start orchard-session.target >/dev/null 2>&1 &
 lxpolkit &

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Settings
-Exec=settings
-Icon=preferences-system
+Exec=/usr/local/bin/settings
+Icon=orchard-settings
 Categories=Settings;
 Terminal=false

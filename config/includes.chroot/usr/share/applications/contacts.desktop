@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Contacts
+Exec=/usr/local/bin/contacts
+Icon=orchard-contacts
+Categories=Office;
+Terminal=false

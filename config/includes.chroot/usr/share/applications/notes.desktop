@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Notes
+Exec=/usr/local/bin/notes
+Icon=orchard-notes
+Categories=Utility;
+Terminal=false

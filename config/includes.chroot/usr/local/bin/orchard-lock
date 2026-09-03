@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+import os
+from orchard.ui import load_settings
+s = load_settings()
+wall = s.get("lock_wallpaper") or "/usr/share/backgrounds/orchard/orchard-lock.png"
+args = [
+    "gtklock",
+    "--background", wall,
+    "--style", "/usr/share/orchard/lock.css",
+    "--time-format", "%I:%M",
+    "--date-format", "%A, %B %d",
+    "--daemonize",
+]
+os.execv("/usr/bin/gtklock", args)

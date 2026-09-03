@@ -1,50 +1,119 @@
 #!/usr/bin/env python3
-import gi
 import os
+import sys
+from pathlib import Path
+import gi
 gi.require_version("Gtk", "4.0")
 from gi.repository import Gtk
-from orchard.ui import install_css, titled_label
+from orchard.ui import install_css, spawn
 
 class Files(Gtk.Application):
     def __init__(self):
         super().__init__(application_id="org.orchard.Files")
+        self.current = Path.home()
+        self.listbox = None
+        self.path_label = None
+        self.history = []
 
     def do_activate(self):
         install_css()
         win = Gtk.ApplicationWindow(application=self, title="Files")
-        win.set_default_size(900, 580)
+        win.set_default_size(940, 620)
 
-        root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
-        root.set_margin_top(20)
-        root.set_margin_bottom(20)
-        root.set_margin_start(20)
-        root.set_margin_end(20)
+        root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
 
-        home = os.path.expanduser("~")
-        root.append(titled_label("Files", home))
+        toolbar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        toolbar.set_margin_top(10)
+        toolbar.set_margin_start(10)
+        toolbar.set_margin_end(10)
 
-        store = Gtk.StringList()
-        try:
-            names = sorted(os.listdir(home), key=str.lower)
-        except OSError:
-            names = []
+        back = Gtk.Button(label="‹")
+        back.connect("clicked", self.go_back)
+        up = Gtk.Button(label="↑")
+        up.connect("clicked", self.go_up)
+        home = Gtk.Button(label="Home")
+        home.connect("clicked", lambda *_: self.open_dir(Path.home()))
+        toolbar.append(back); toolbar.append(up); toolbar.append(home)
 
-        for name in names:
-            store.append(name)
+        self.path_label = Gtk.Label(xalign=0, hexpand=True)
+        toolbar.append(self.path_label)
+        root.append(toolbar)
 
-        factory = Gtk.SignalListItemFactory()
-        factory.connect("setup", lambda f, item: item.set_child(Gtk.Label(xalign=0)))
-        factory.connect(
-            "bind",
-            lambda f, item: item.get_child().set_text(item.get_item().get_string())
-        )
+        body = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        sidebar = Gtk.ListBox()
+        sidebar.set_size_request(185, -1)
+        for label, path in [
+            ("Home", Path.home()),
+            ("Desktop", Path.home() / "Desktop"),
+            ("Documents", Path.home() / "Documents"),
+            ("Downloads", Path.home() / "Downloads"),
+            ("Pictures", Path.home() / "Pictures"),
+        ]:
+            row = Gtk.ListBoxRow()
+            row.path = path
+            row.set_child(Gtk.Label(label=label, xalign=0))
+            sidebar.append(row)
+        sidebar.connect("row-activated", lambda _b, row: self.open_dir(row.path))
+        body.append(sidebar)
 
-        view = Gtk.ListView(model=Gtk.NoSelection(model=store), factory=factory)
+        self.listbox = Gtk.ListBox()
+        self.listbox.connect("row-activated", self.row_open)
         scroll = Gtk.ScrolledWindow()
-        scroll.set_child(view)
-        root.append(scroll)
+        scroll.set_hexpand(True); scroll.set_vexpand(True)
+        scroll.set_child(self.listbox)
+        body.append(scroll)
+        root.append(body)
 
         win.set_child(root)
         win.present()
+        self.refresh()
 
-Files().run()
+    def clear(self):
+        child = self.listbox.get_first_child()
+        while child:
+            nxt = child.get_next_sibling()
+            self.listbox.remove(child)
+            child = nxt
+
+    def refresh(self):
+        self.path_label.set_text(str(self.current))
+        self.clear()
+        try:
+            entries = sorted(self.current.iterdir(), key=lambda p: (not p.is_dir(), p.name.lower()))
+        except Exception:
+            entries = []
+        for p in entries:
+            row = Gtk.ListBoxRow()
+            row.path = p
+            box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            icon = Gtk.Image.new_from_icon_name("folder-symbolic" if p.is_dir() else "text-x-generic-symbolic")
+            box.append(icon)
+            box.append(Gtk.Label(label=p.name, xalign=0, hexpand=True))
+            row.set_child(box)
+            self.listbox.append(row)
+
+    def open_dir(self, path):
+        path = Path(path)
+        if path.exists() and path.is_dir():
+            if self.current != path:
+                self.history.append(self.current)
+            self.current = path
+            self.refresh()
+
+    def go_back(self, *_):
+        if self.history:
+            self.current = self.history.pop()
+            self.refresh()
+
+    def go_up(self, *_):
+        if self.current.parent != self.current:
+            self.open_dir(self.current.parent)
+
+    def row_open(self, _list, row):
+        p = row.path
+        if p.is_dir():
+            self.open_dir(p)
+        else:
+            spawn(["/usr/bin/xdg-open", str(p)])
+
+Files().run(sys.argv)

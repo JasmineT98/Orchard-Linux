@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Text Editor
-Exec=text-editor
-Icon=accessories-text-editor
-Categories=Utility;
+Exec=/usr/local/bin/text-editor
+Icon=orchard-editor
+Categories=Utility;TextEditor;
 Terminal=false

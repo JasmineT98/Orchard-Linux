@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Browser
+Exec=/usr/local/bin/orchard-browser
+Icon=orchard-browser
+Categories=Network;WebBrowser;
+Terminal=false

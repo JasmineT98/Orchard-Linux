@@ -2,58 +2,85 @@
 
 **Current development build: B2**
 
-Orchard Linux is a lightweight desktop operating system designed to provide a
-macOS-familiar experience on ordinary PC hardware while using Orchard-made
-branding, artwork, icons, code, and shell components.
+Orchard Linux is a lightweight desktop operating system for ordinary x86-64
+PC hardware. It uses a standard Linux kernel and hardware stack underneath,
+while Orchard owns the visible desktop experience.
 
-B2 focuses first on hardware stability. The Linux kernel handles the majority
-of generic hardware drivers; Orchard adds the firmware and standard Linux
-hardware services those drivers commonly require.
+This B2 overhaul replaces the prototype Waybar/Wofi desktop chrome with the
+Orchard shell itself.
 
-## B2 priorities
+## Visible Orchard shell
 
-- Broad x86-64 PC and laptop hardware support
-- Compatible x86-64 Chromebook support
-- Intel and AMD CPU microcode
-- Broad Wi-Fi, Bluetooth, audio, graphics, USB, storage, and laptop support
-- Preserve the fast live-session behavior proven by the previous working build
-- Keep the current lightweight shell while the final Orchard shell is developed
-- Permanent project filenames that do not change between builds
+The normal session now contains:
 
-## Build locally
+- Orchard top menu bar
+- Orchard Dock
+- Orchard system menu
+- Orchard Search / Applications launcher
+- Orchard Control Center
+- Orchard Notification Center
+- Graphical Wi-Fi controls
+- Graphical Settings
+- Orchard lock screen styling
+- macOS-familiar Command / Windows / Search keyboard behavior
+- macOS-style edge/corner snap previews and usable-area tiling
+- Orchard recovery panel
+- first-party Files, Browser launcher, Notes, Text Editor, Calculator,
+  App Store, Calendar, Contacts, Clock, Photos, Activity Monitor,
+  System Information, Software Update and Settings
 
-On Debian 13:
+The visible shell is Orchard-made. No Apple logos, Apple artwork, Apple icons,
+Apple proprietary UI resources or Apple code are included.
+
+## Architecture
+
+```text
+Orchard Shell / Apps
+        ↓
+standard Linux user-space interfaces
+        ↓
+NetworkManager / BlueZ / PipeWire / UPower / UDisks / XDG
+        ↓
+Labwc compatibility compositor
+        ↓
+Linux kernel + firmware
+```
+
+Labwc is the hidden window-management backend for B2. The top bar, Dock,
+launcher and system panels are Orchard components.
+
+## Hardware philosophy
+
+The Linux kernel handles the majority of generic hardware drivers. Orchard
+ships the firmware, microcode and standard services those drivers commonly
+require.
+
+## Build
 
 ```bash
 sudo ./build.sh
 ```
 
-Output:
+Permanent output names:
 
 ```text
 out/orchard-linux-amd64.iso
 out/orchard-linux-amd64.iso.sha256
 ```
 
-## Cloud build
-
-The permanent GitHub Actions workflow is:
-
-```text
-.github/workflows/build-iso.yml
-```
-
-It produces the permanent artifact name:
+The GitHub Actions artifact is permanently named:
 
 ```text
 orchard-linux-amd64
 ```
 
-## Stable backup
+## Stable backup policy
 
-`.orchard-backup` contains the Git commit that has been explicitly confirmed
-stable. Updating that file triggers the backup workflow, which verifies that
-commit and creates an `orchard-last-working-source` source archive artifact.
+`.orchard-backup` remains the last explicitly confirmed stable commit.
+Experimental uploads never promote themselves to stable.
 
-The commit SHA remains the authoritative restore point in Git history. A new
-upload is never considered stable automatically.
+## Current boundary
+
+This is still the live/test B2 desktop. A final disk installer remains a
+separate phase rather than being silently added before the live desktop and
+hardware behavior are confirmed stable.

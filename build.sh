@@ -10,30 +10,20 @@ if [[ $EUID -ne 0 ]]; then
   exit 1
 fi
 
-if [[ ! -r /etc/os-release ]]; then
-  echo "Cannot detect build host." >&2
-  exit 1
-fi
-
 . /etc/os-release
 if [[ "${ID:-}" != "debian" || "${VERSION_CODENAME:-}" != "trixie" ]]; then
-  echo "Warning: Orchard is validated on Debian 13 (trixie). Continuing anyway." >&2
+  echo "Warning: Orchard is validated on Debian 13 (trixie)." >&2
 fi
 
 apt-get update
-
 if ! command -v lb >/dev/null 2>&1; then
   DEBIAN_FRONTEND=noninteractive apt-get install -y \
     live-build debootstrap xorriso squashfs-tools
 fi
 
-# Do not pre-check the live package list against the build host's APT sources.
-# Several hardware firmware packages live in non-free-firmware, and the build
-# host may not have that component enabled. live-build resolves the package
-# list after --archive-areas enables all required Debian archive components.
-
 find "$ROOT/config/hooks" -type f -name '*.hook.chroot' -exec chmod +x {} +
 find "$ROOT/config/includes.chroot/usr/local/bin" -type f -exec chmod +x {} +
+find "$ROOT/config/includes.chroot/usr/local/libexec" -type f -exec chmod +x {} +
 chmod +x "$ROOT/config/includes.chroot/etc/skel/.config/labwc/autostart"
 
 rm -rf "$BUILD"
@@ -55,17 +45,12 @@ lb config \
 lb build
 
 ISO="$(find . -maxdepth 1 -type f -name '*.iso' | head -n1)"
-if [[ -z "$ISO" ]]; then
-  echo "Build completed but no ISO was found." >&2
-  exit 1
-fi
+test -n "$ISO"
 
 cp -f "$ISO" "$OUT/orchard-linux-amd64.iso"
-
 (
   cd "$OUT"
   sha256sum orchard-linux-amd64.iso > orchard-linux-amd64.iso.sha256
 )
 
-echo
 echo "Orchard ISO ready: $OUT/orchard-linux-amd64.iso"

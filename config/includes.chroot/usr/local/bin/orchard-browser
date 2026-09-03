@@ -1,0 +1,10 @@
+#!/bin/sh
+set -eu
+mkdir -p "$HOME/.config/orchard/browser"
+exec /usr/bin/chromium \
+  --user-data-dir="$HOME/.config/orchard/browser" \
+  --no-first-run \
+  --disable-default-apps \
+  --disable-sync \
+  --disable-features=Translate,AutofillServerCommunication \
+  "$@"

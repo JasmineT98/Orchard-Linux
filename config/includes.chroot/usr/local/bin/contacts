@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+import sys, json
+from pathlib import Path
+import gi
+gi.require_version("Gtk", "4.0")
+from gi.repository import Gtk
+from orchard.ui import install_css, titled_label
+
+PATH = Path.home() / ".local/share/orchard/contacts.json"
+
+class Contacts(Gtk.Application):
+    def __init__(self):
+        super().__init__(application_id="org.orchard.Contacts")
+        self.listbox = None
+
+    def load(self):
+        try: return json.loads(PATH.read_text())
+        except Exception: return []
+
+    def save(self, data):
+        PATH.parent.mkdir(parents=True, exist_ok=True)
+        PATH.write_text(json.dumps(data, indent=2) + "\\n")
+
+    def refresh(self):
+        child = self.listbox.get_first_child()
+        while child:
+            nxt = child.get_next_sibling(); self.listbox.remove(child); child = nxt
+        for c in self.load():
+            box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+            n = Gtk.Label(xalign=0); n.set_markup(f"<b>{c.get('name','')}</b>")
+            box.append(n)
+            box.append(Gtk.Label(label=c.get("email",""), xalign=0))
+            row = Gtk.ListBoxRow(); row.set_child(box); self.listbox.append(row)
+
+    def do_activate(self):
+        install_css()
+        win = Gtk.ApplicationWindow(application=self, title="Contacts")
+        win.set_default_size(650, 550)
+        root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        root.set_margin_top(20); root.set_margin_bottom(20)
+        root.set_margin_start(22); root.set_margin_end(22)
+        head = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        head.append(titled_label("Contacts", "People you keep close"))
+        add = Gtk.Button(label="Add")
+        add.connect("clicked", self.add_dialog, win)
+        head.append(add); root.append(head)
+        self.listbox = Gtk.ListBox()
+        scroll = Gtk.ScrolledWindow(); scroll.set_vexpand(True); scroll.set_child(self.listbox)
+        root.append(scroll)
+        win.set_child(root); win.present(); self.refresh()
+
+    def add_dialog(self, _b, win):
+        d = Gtk.Dialog(title="New Contact", transient_for=win, modal=True)
+        d.add_button("Cancel", Gtk.ResponseType.CANCEL); d.add_button("Save", Gtk.ResponseType.OK)
+        box = d.get_content_area(); box.set_spacing(8)
+        box.set_margin_top(14); box.set_margin_bottom(14); box.set_margin_start(14); box.set_margin_end(14)
+        name = Gtk.Entry(placeholder_text="Name")
+        email = Gtk.Entry(placeholder_text="Email")
+        box.append(name); box.append(email)
+        d.connect("response", self.add_response, name, email); d.present()
+
+    def add_response(self, d, response, name, email):
+        if response == Gtk.ResponseType.OK and name.get_text().strip():
+            data = self.load()
+            data.append({"name": name.get_text().strip(), "email": email.get_text().strip()})
+            self.save(data); self.refresh()
+        d.close()
+
+Contacts().run(sys.argv)

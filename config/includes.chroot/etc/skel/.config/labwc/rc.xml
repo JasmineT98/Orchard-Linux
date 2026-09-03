@@ -1,53 +1,100 @@
 <?xml version="1.0"?>
 <labwc_config>
   <core>
+    <decoration>server</decoration>
     <gap>8</gap>
+    <adaptiveSync>no</adaptiveSync>
+    <allowTearing>no</allowTearing>
+    <xwaylandPersistence>yes</xwaylandPersistence>
   </core>
+
+  <placement>
+    <policy>center</policy>
+  </placement>
 
   <theme>
     <name>Orchard</name>
-    <cornerRadius>10</cornerRadius>
-    <dropShadows>yes</dropShadows>
+    <titlebar>
+      <layout>close,iconify,max:</layout>
+      <showTitle>yes</showTitle>
+    </titlebar>
+    <cornerRadius>12</cornerRadius>
     <keepBorder>yes</keepBorder>
+    <maximizedDecoration>titlebar</maximizedDecoration>
+    <dropShadows>yes</dropShadows>
+    <dropShadowsOnTiled>yes</dropShadowsOnTiled>
+    <font place="ActiveWindow"><name>Inter</name><size>10</size></font>
+    <font place="InactiveWindow"><name>Inter</name><size>10</size></font>
+    <font place="OnScreenDisplay"><name>Inter</name><size>11</size></font>
   </theme>
 
+  <windowSwitcher preview="yes" outlines="yes">
+    <osd show="yes" style="classic" output="all" thumbnailLabelFormat="%T" />
+    <fields>
+      <field content="icon" width="10%" />
+      <field content="desktop_entry_name" width="35%" />
+      <field content="title" width="55%" />
+    </fields>
+  </windowSwitcher>
+
+  <resistance>
+    <screenEdgeStrength>18</screenEdgeStrength>
+    <windowEdgeStrength>16</windowEdgeStrength>
+    <unSnapThreshold>22</unSnapThreshold>
+  </resistance>
+
+  <snapping>
+    <range inner="12" outer="12" />
+    <cornerRange>70</cornerRange>
+    <overlay enabled="yes">
+      <delay inner="180" outer="180" />
+    </overlay>
+    <topMaximize>yes</topMaximize>
+    <notifyClient>always</notifyClient>
+  </snapping>
+
+  <regions>
+    <region name="top-left" x="0%" y="0%" height="50%" width="50%" />
+    <region name="top-right" x="50%" y="0%" height="50%" width="50%" />
+    <region name="left" x="0%" y="0%" height="100%" width="50%" />
+    <region name="right" x="50%" y="0%" height="100%" width="50%" />
+    <region name="bottom-left" x="0%" y="50%" height="50%" width="50%" />
+    <region name="bottom-right" x="50%" y="50%" height="50%" width="50%" />
+  </regions>
+
+  <desktops>
+    <popupTime>500</popupTime>
+    <names>
+      <name>Desktop 1</name>
+      <name>Desktop 2</name>
+      <name>Desktop 3</name>
+      <name>Desktop 4</name>
+    </names>
+  </desktops>
+
   <keyboard>
-    <default />
-
     <keybind key="W-space">
-      <action name="Execute" command="wofi --show drun --prompt Search" />
+      <action name="Execute" command="/usr/local/bin/orchard-launcher" />
     </keybind>
-
-    <keybind key="W-Tab">
-      <action name="NextWindow" />
-    </keybind>
-
-    <keybind key="W-S-Tab">
-      <action name="PreviousWindow" />
-    </keybind>
-
-    <keybind key="W-q">
-      <action name="Close" />
-    </keybind>
-
-    <keybind key="W-w">
-      <action name="Close" />
-    </keybind>
-
+    <keybind key="W-Tab"><action name="NextWindow" /></keybind>
+    <keybind key="W-S-Tab"><action name="PreviousWindow" /></keybind>
+    <keybind key="W-q"><action name="Close" /></keybind>
+    <keybind key="W-w"><action name="Close" /></keybind>
+    <keybind key="W-m"><action name="Iconify" /></keybind>
     <keybind key="W-l">
-      <action name="Execute" command="loginctl lock-session" />
+      <action name="Execute" command="/usr/local/bin/orchard-lock" />
     </keybind>
-
+    <keybind key="W-comma">
+      <action name="Execute" command="/usr/local/bin/settings" />
+    </keybind>
     <keybind key="W-Return">
-      <action name="Execute" command="foot" />
+      <action name="Execute" command="/usr/bin/foot" />
     </keybind>
-
     <keybind key="W-S-3">
-      <action name="Execute" command="orchard-screenshot-full" />
+      <action name="Execute" command="/usr/local/bin/orchard-screenshot-full" />
     </keybind>
-
     <keybind key="W-S-4">
-      <action name="Execute" command="orchard-screenshot-area" />
+      <action name="Execute" command="/usr/local/bin/orchard-screenshot-area" />
     </keybind>
 
     <keybind key="XF86AudioLowerVolume">
@@ -66,4 +113,8 @@
       <action name="Execute" command="brightnessctl set 10%-" />
     </keybind>
   </keyboard>
+
+  <mouse>
+    <default />
+  </mouse>
 </labwc_config>

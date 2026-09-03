@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Files
-Exec=files
-Icon=system-file-manager
+Exec=/usr/local/bin/files
+Icon=orchard-files
 Categories=Utility;
 Terminal=false

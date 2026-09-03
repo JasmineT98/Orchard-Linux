@@ -1,0 +1,3 @@
+[Unit]
+Description=Orchard desktop session
+Wants=orchard-shell.service orchard-wallpaper.service orchard-notifications.service

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Software Update
+Exec=/usr/local/bin/software-update
+Icon=orchard-update
+Categories=System;
+Terminal=false

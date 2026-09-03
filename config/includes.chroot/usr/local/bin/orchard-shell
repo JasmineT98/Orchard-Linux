@@ -1,0 +1,231 @@
+#!/usr/bin/env python3
+import os
+import sys
+import subprocess
+import datetime
+
+import ctypes
+import ctypes.util
+lib = ctypes.util.find_library("gtk4-layer-shell")
+if lib:
+    ctypes.CDLL(lib, mode=ctypes.RTLD_GLOBAL)
+
+import gi
+gi.require_version("Gtk", "4.0")
+gi.require_version("Gtk4LayerShell", "1.0")
+from gi.repository import Gtk, GLib, Gtk4LayerShell as LayerShell
+
+from orchard.ui import load_settings, spawn
+
+SHELL_CSS = """
+window {
+  background: transparent;
+}
+.topbar {
+  background: rgba(22,22,25,0.92);
+  color: #f7f7f8;
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+.dock-host {
+  background: transparent;
+}
+.dock {
+  background: rgba(34,34,39,0.82);
+  border: 1px solid rgba(255,255,255,0.13);
+  border-radius: 18px;
+  padding: 7px 10px;
+}
+button {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  border-radius: 9px;
+  padding: 4px 8px;
+  color: #f7f7f8;
+}
+button:hover {
+  background: rgba(255,255,255,0.10);
+}
+button.orchard-logo label {
+  color: #ff7a00;
+  font-size: 19px;
+}
+.status-label {
+  font-size: 12px;
+}
+"""
+
+DOCK = [
+    ("orchard-files", "/usr/local/bin/files"),
+    ("orchard-browser", "/usr/local/bin/orchard-browser"),
+    ("orchard-notes", "/usr/local/bin/notes"),
+    ("orchard-store", "/usr/local/bin/app-store"),
+    ("orchard-settings", "/usr/local/bin/settings"),
+    ("orchard-terminal", "/usr/bin/foot"),
+]
+
+def add_css():
+    from gi.repository import Gdk
+    provider = Gtk.CssProvider()
+    try:
+        provider.load_from_data(SHELL_CSS.encode())
+    except TypeError:
+        provider.load_from_data(SHELL_CSS)
+    Gtk.StyleContext.add_provider_for_display(
+        Gdk.Display.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+    )
+
+class OrchardShell(Gtk.Application):
+    def __init__(self):
+        super().__init__(application_id="org.orchard.Shell")
+        self.clock = None
+        self.wifi = None
+        self.battery = None
+        self.sound = None
+
+    def layer_base(self, win, layer=LayerShell.Layer.TOP):
+        LayerShell.init_for_window(win)
+        LayerShell.set_layer(win, layer)
+        try:
+            LayerShell.set_namespace(win, "orchard-shell")
+        except Exception:
+            pass
+
+    def make_topbar(self):
+        win = Gtk.ApplicationWindow(application=self)
+        win.set_decorated(False)
+        win.set_default_size(1, 32)
+        self.layer_base(win)
+        for edge in (LayerShell.Edge.TOP, LayerShell.Edge.LEFT, LayerShell.Edge.RIGHT):
+            LayerShell.set_anchor(win, edge, True)
+        LayerShell.auto_exclusive_zone_enable(win)
+
+        outer = Gtk.CenterBox()
+        outer.add_css_class("topbar")
+        outer.set_margin_start(5)
+        outer.set_margin_end(5)
+
+        left = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=2)
+
+        logo = Gtk.Button()
+        logo.add_css_class("orchard-logo")
+        logo.set_child(Gtk.Label(label="●"))
+        logo.connect("clicked", lambda *_: spawn(["/usr/local/bin/orchard-system-menu"]))
+        left.append(logo)
+
+        apps = Gtk.Button(label="Applications")
+        apps.connect("clicked", lambda *_: spawn(["/usr/local/bin/orchard-launcher"]))
+        left.append(apps)
+
+        orchard = Gtk.Button(label="Orchard")
+        orchard.connect("clicked", lambda *_: spawn(["/usr/local/bin/settings"]))
+        left.append(orchard)
+        outer.set_start_widget(left)
+
+        self.clock = Gtk.Button(label="")
+        self.clock.connect("clicked", lambda *_: spawn(["/usr/local/bin/orchard-notification-center"]))
+        outer.set_center_widget(self.clock)
+
+        right = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=1)
+
+        self.wifi = Gtk.Button(label="Wi‑Fi")
+        self.wifi.add_css_class("status-label")
+        self.wifi.connect("clicked", lambda *_: spawn(["/usr/local/bin/wifi-settings"]))
+        right.append(self.wifi)
+
+        self.sound = Gtk.Button()
+        self.sound.set_child(Gtk.Image.new_from_icon_name("audio-volume-high-symbolic"))
+        self.sound.connect("clicked", lambda *_: spawn(["/usr/local/bin/orchard-control-center"]))
+        right.append(self.sound)
+
+        self.battery = Gtk.Button(label="")
+        self.battery.add_css_class("status-label")
+        self.battery.connect("clicked", lambda *_: spawn(["/usr/local/bin/orchard-control-center"]))
+        right.append(self.battery)
+
+        cc = Gtk.Button()
+        cc.set_child(Gtk.Image.new_from_icon_name("emblem-system-symbolic"))
+        cc.connect("clicked", lambda *_: spawn(["/usr/local/bin/orchard-control-center"]))
+        right.append(cc)
+
+        outer.set_end_widget(right)
+        win.set_child(outer)
+        win.present()
+        return win
+
+    def make_dock(self):
+        settings = load_settings()
+        if not settings.get("dock_visible", True):
+            return None
+
+        height = int(settings.get("dock_size", 62)) + 18
+        win = Gtk.ApplicationWindow(application=self)
+        win.set_decorated(False)
+        win.set_default_size(1, height)
+        self.layer_base(win)
+        for edge in (LayerShell.Edge.BOTTOM, LayerShell.Edge.LEFT, LayerShell.Edge.RIGHT):
+            LayerShell.set_anchor(win, edge, True)
+        LayerShell.set_margin(win, LayerShell.Edge.BOTTOM, 7)
+        LayerShell.auto_exclusive_zone_enable(win)
+
+        host = Gtk.CenterBox()
+        host.add_css_class("dock-host")
+
+        dock = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+        dock.add_css_class("dock")
+        icon_size = max(34, min(58, int(settings.get("dock_size", 62)) - 14))
+
+        for icon, command in DOCK:
+            button = Gtk.Button()
+            image = Gtk.Image.new_from_icon_name(icon)
+            image.set_pixel_size(icon_size)
+            button.set_child(image)
+            button.connect("clicked", lambda _b, c=command: spawn([c]))
+            dock.append(button)
+
+        host.set_center_widget(dock)
+        win.set_child(host)
+        win.present()
+        return win
+
+    def update_status(self):
+        now = datetime.datetime.now()
+        self.clock.set_label(now.strftime("%a %b %d  %I:%M %p"))
+
+        try:
+            cp = subprocess.run(
+                ["/usr/bin/nmcli", "-t", "-f", "ACTIVE,SSID", "dev", "wifi"],
+                text=True, capture_output=True, timeout=2
+            )
+            active = ""
+            for line in cp.stdout.splitlines():
+                if line.startswith("yes:"):
+                    active = line[4:].strip()
+                    break
+            self.wifi.set_label(active if active else "Wi‑Fi")
+        except Exception:
+            self.wifi.set_label("Wi‑Fi")
+
+        capacity = None
+        try:
+            for p in __import__("pathlib").Path("/sys/class/power_supply").glob("BAT*/capacity"):
+                capacity = p.read_text().strip()
+                break
+        except Exception:
+            pass
+        self.battery.set_label(f"▰ {capacity}%" if capacity else "")
+
+        return True
+
+    def do_activate(self):
+        add_css()
+        self.make_topbar()
+        self.make_dock()
+        self.update_status()
+        GLib.timeout_add_seconds(15, self.update_status)
+
+if "--self-test" in sys.argv:
+    print("orchard-shell import self-test: OK")
+    raise SystemExit(0)
+
+OrchardShell().run(sys.argv)

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Calendar
+Exec=/usr/local/bin/calendar
+Icon=orchard-calendar
+Categories=Office;
+Terminal=false

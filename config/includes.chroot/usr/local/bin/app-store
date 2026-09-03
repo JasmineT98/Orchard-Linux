@@ -1,43 +1,57 @@
 #!/usr/bin/env python3
+import sys
+import subprocess
 import gi
 gi.require_version("Gtk", "4.0")
-from gi.repository import Gtk
+from gi.repository import Gtk, GLib
 from orchard.ui import install_css, titled_label
+
+APPS = [
+    ("VLC", "Video and audio player", "vlc"),
+    ("GIMP", "Image editor", "gimp"),
+    ("LibreOffice", "Office suite", "libreoffice"),
+    ("Audacity", "Audio editor", "audacity"),
+    ("Transmission", "BitTorrent client", "transmission-gtk"),
+]
 
 class Store(Gtk.Application):
     def __init__(self):
         super().__init__(application_id="org.orchard.AppStore")
 
+    def installed(self, pkg):
+        return subprocess.run(
+            ["/usr/bin/dpkg-query", "-W", "-f=${Status}", pkg],
+            text=True, capture_output=True
+        ).returncode == 0
+
     def do_activate(self):
         install_css()
         win = Gtk.ApplicationWindow(application=self, title="App Store")
-        win.set_default_size(920, 590)
+        win.set_default_size(900, 600)
+        root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14)
+        root.set_margin_top(22); root.set_margin_bottom(22)
+        root.set_margin_start(26); root.set_margin_end(26)
+        root.append(titled_label("App Store", "Apps curated for Orchard"))
 
-        root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=18)
-        root.set_margin_top(24)
-        root.set_margin_bottom(24)
-        root.set_margin_start(28)
-        root.set_margin_end(28)
-
-        root.append(titled_label("App Store", "Discover apps for Orchard."))
-
-        for name, desc in [
-            ("Firefox", "Web browser"),
-            ("VLC", "Video and audio player"),
-            ("GIMP", "Image editor"),
-        ]:
+        for name, desc, pkg in APPS:
             row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
             info = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
-            title = Gtk.Label(label=name, xalign=0)
+            title = Gtk.Label(xalign=0)
             title.set_markup(f"<b>{name}</b>")
-            sub = Gtk.Label(label=desc, xalign=0)
-            info.append(title)
-            info.append(sub)
+            info.append(title); info.append(Gtk.Label(label=desc, xalign=0))
             row.append(info)
-            row.append(Gtk.Button(label="Install"))
+            button = Gtk.Button(label="Installed" if self.installed(pkg) else "Install")
+            button.set_sensitive(not self.installed(pkg))
+            button.connect("clicked", self.install, pkg)
+            row.append(button)
             root.append(row)
 
         win.set_child(root)
         win.present()
 
-Store().run()
+    def install(self, button, pkg):
+        button.set_label("Installing…")
+        button.set_sensitive(False)
+        subprocess.Popen(["/usr/bin/pkexec", "/usr/local/libexec/orchard-install-package", pkg])
+
+Store().run(sys.argv)

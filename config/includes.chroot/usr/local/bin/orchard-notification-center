@@ -1,0 +1,75 @@
+#!/usr/bin/env python3
+import sys
+import subprocess
+import datetime
+
+import ctypes
+import ctypes.util
+lib = ctypes.util.find_library("gtk4-layer-shell")
+if lib:
+    ctypes.CDLL(lib, mode=ctypes.RTLD_GLOBAL)
+
+import gi
+gi.require_version("Gtk", "4.0")
+gi.require_version("Gtk4LayerShell", "1.0")
+from gi.repository import Gtk, GLib, Gtk4LayerShell as LayerShell
+
+from orchard.ui import install_css, card
+
+class NotificationCenter(Gtk.Application):
+    def __init__(self):
+        super().__init__(application_id="org.orchard.NotificationCenter")
+
+    def do_activate(self):
+        install_css("""
+        window { background: rgba(35,35,40,0.96); color: white; }
+        .orchard-card { background: rgba(255,255,255,0.08); }
+        """)
+        win = Gtk.ApplicationWindow(application=self)
+        win.set_decorated(False)
+        win.set_default_size(390, 600)
+        LayerShell.init_for_window(win)
+        LayerShell.set_layer(win, LayerShell.Layer.OVERLAY)
+        LayerShell.set_anchor(win, LayerShell.Edge.TOP, True)
+        LayerShell.set_anchor(win, LayerShell.Edge.RIGHT, True)
+        LayerShell.set_margin(win, LayerShell.Edge.TOP, 35)
+        LayerShell.set_margin(win, LayerShell.Edge.RIGHT, 8)
+        try:
+            LayerShell.set_keyboard_mode(win, LayerShell.KeyboardMode.ON_DEMAND)
+        except Exception:
+            pass
+
+        root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        root.set_margin_top(14)
+        root.set_margin_bottom(14)
+        root.set_margin_start(14)
+        root.set_margin_end(14)
+
+        now = datetime.datetime.now()
+        date = Gtk.Label(label=now.strftime("%A, %B %d"), xalign=0)
+        date.add_css_class("orchard-title")
+        root.append(date)
+
+        cal = Gtk.Calendar()
+        root.append(cal)
+
+        notif = card()
+        notif.append(Gtk.Label(label="Notifications", xalign=0))
+        try:
+            cp = subprocess.run(["/usr/bin/makoctl", "list"], text=True, capture_output=True, timeout=2)
+            text = cp.stdout.strip()
+        except Exception:
+            text = ""
+        label = Gtk.Label(
+            label=text[:1600] if text else "No new notifications",
+            xalign=0,
+        )
+        label.set_wrap(True)
+        label.set_selectable(True)
+        notif.append(label)
+        root.append(notif)
+
+        win.set_child(root)
+        win.present()
+
+NotificationCenter().run(sys.argv)

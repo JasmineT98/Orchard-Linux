@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Terminal
-Exec=foot
+Exec=/usr/bin/foot
 Icon=utilities-terminal
 Categories=System;
 Terminal=false

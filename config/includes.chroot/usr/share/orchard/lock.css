@@ -1,0 +1,18 @@
+window {
+  background-color: #111216;
+  color: white;
+}
+#clock-label {
+  font-size: 54px;
+  font-weight: 300;
+}
+#date-label {
+  font-size: 17px;
+}
+#input-field {
+  border-radius: 12px;
+  padding: 8px 12px;
+}
+button {
+  border-radius: 12px;
+}

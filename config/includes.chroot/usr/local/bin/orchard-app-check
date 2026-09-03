@@ -1,0 +1,27 @@
+#!/bin/sh
+set -eu
+
+echo "Orchard app runtime check"
+echo
+
+python3 - <<'PY'
+import sys
+print("Python:", sys.version.split()[0])
+
+import gi
+gi.require_version("Gtk", "4.0")
+from gi.repository import Gtk
+print("GTK4: OK")
+
+import orchard.ui
+print("orchard.ui: OK")
+PY
+
+echo
+for app in settings files text-editor calculator app-store firefox-esr foot; do
+    if command -v "$app" >/dev/null 2>&1; then
+        echo "$app: $(command -v "$app")"
+    else
+        echo "$app: MISSING"
+    fi
+done

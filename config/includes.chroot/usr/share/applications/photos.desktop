@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Photos
+Exec=/usr/local/bin/photos
+Icon=orchard-photos
+Categories=Graphics;
+Terminal=false
